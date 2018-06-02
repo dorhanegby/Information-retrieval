@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.util.*;
 
 public class Retriever {
+
+    private static final int SCORE_THRESHOLD = 10;
+
     private StandardAnalyzer analyzer;
     private Directory index ;
     public Retriever(Directory index, StandardAnalyzer analyzer) {
@@ -31,17 +34,27 @@ public class Retriever {
 
             List<Integer> docIds = new LinkedList<>();
             Query q = new QueryParser(Helpers.TEXT_FIELD, analyzer).parse(queryEntry.getValue()); // this is already removing stopwords
-            TopDocs docs = searcher.search(q, 10);
+            TopDocs docs = searcher.search(q, 20);
             ScoreDoc[] hits = docs.scoreDocs;
-
+            System.out.println("Query n: "+ queryEntry.getKey()); // TODO: DELETE THIS
             for (int i = 0; i < hits.length; ++i) {
                 int docId = hits[i].doc;
                 Document d = searcher.doc(docId);
                 Float score = hits[i].score;
-                docIds.add(Integer.valueOf(d.get(Helpers.DOC_ID)));
+                if(score < SCORE_THRESHOLD) {
+                    break;
+                }
+
+                String actualDocId = d.get(Helpers.DOC_ID);
+
+                docIds.add(Integer.valueOf(actualDocId));
+
+                System.out.println(actualDocId+" | score: " + score); // TODO: DELETE THIS
             }
 
             results.put(queryEntry.getKey(), docIds);
+            System.out.println("++++++++++++++++++++++++++++++++++++"); // TODO: DELETE THIS
+
         }
         return results;
     }
