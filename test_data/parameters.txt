@@ -1,0 +1,4 @@
+queryFile=test_data/queries.txt
+docsFile=test_data/docs.txt
+outputFile=out/output.txt
+retrievalAlgorithm=basic
