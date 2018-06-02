@@ -11,6 +11,8 @@ public class Runner {
         File queryFile = new File(params.get("queryFile"));
         File docsFile = new File(params.get("docsFile"));
         String searchAlgo = params.get("retrievalAlgorithm");
+        Map<Integer,String> documentsMap = Helpers.basicParser(docsFile,"*TEXT");
+        Map<Integer,String> queriesMap = Helpers.basicParser(queryFile, "*FIND");
         System.out.println("Fin");
 
     }
