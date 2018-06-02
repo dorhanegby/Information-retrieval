@@ -1,11 +1,22 @@
+import org.apache.lucene.analysis.CharArraySet;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Helpers {
+
+    public static final String DOC_ID = "docID";
+    public static final String TEXT_FIELD = "content";
+
+    public static CharArraySet getStopList() {
+        String[] listOfWords = {"the", "of", "a", "to", "in", "and", "for", "that", "with", "was", "on", "last", "by", "but", "as", "at", "his", "from", "week", "is"};
+
+        List<String> list = new ArrayList<String>(Arrays.asList(listOfWords));
+        return new CharArraySet(list, true);
+    }
+
     public static Map<String,String> getParams(File paramFile) throws IOException {
         Map<String, String> params = new HashMap<>();
         List<String> lines = Files.readAllLines(paramFile.toPath());
@@ -20,17 +31,17 @@ public class Helpers {
         return params;
     }
 
-    public static Map<Integer,String> basicParser(File toParse, String separatorText) throws IOException {
-        Map<Integer, String> docs = new HashMap<>();
+    public static Map<String,String> basicParser(File toParse, String separatorText) throws IOException {
+        Map<String, String> docs = new HashMap<>();
         List<String> lines = Files.readAllLines(toParse.toPath());
-        Integer currentId = 0;
+        String currentId = "";
         StringBuilder stringBuilder = new StringBuilder();
         for (String line : lines) {
             if(line.startsWith(separatorText)) {
                 addDocument(stringBuilder,currentId,docs);
                 stringBuilder.setLength(0); // Clearing the string builder
                 String[] headers = cleanSpaces(line).split(" "); // Gets the headers of the document
-                currentId = Integer.valueOf(headers[1]); // Getting the doc id, second text after the separator (heuristic)
+                currentId = headers[1]; // Getting the doc id, second text after the separator (heuristic)
             } else{
                 stringBuilder.append(line.trim());
             }
@@ -39,7 +50,7 @@ public class Helpers {
         return docs;
     }
 
-    public static void addDocument(StringBuilder sb, Integer docId, Map<Integer,String> docs)
+    public static void addDocument(StringBuilder sb, String docId, Map<String,String> docs)
     {
         if(sb.length()!= 0)
         {
