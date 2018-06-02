@@ -32,7 +32,7 @@ public class IndexDocs {
     }
 
 
-    public IndexDocs(Map<String,String> documentsMap) throws Exception {
+    public IndexDocs(Map<Integer,String> documentsMap) throws Exception {
         CharArraySet stopList = Helpers.getStopList();
 
         this.analyzer = new StandardAnalyzer(stopList);
@@ -41,8 +41,8 @@ public class IndexDocs {
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
         IndexWriter w = new IndexWriter(index, config);
-        for (Map.Entry<String, String> doc : documentsMap.entrySet()) {
-            addDoc(w, doc.getValue(), doc.getKey());
+        for (Map.Entry<Integer, String> doc : documentsMap.entrySet()) {
+            addDoc(w, doc.getValue(), doc.getKey().toString());
         }
         w.close();
     }

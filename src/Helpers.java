@@ -21,7 +21,7 @@ public class Helpers {
     }
 
     public static Map<String,String> getParams(File paramFile) throws IOException {
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new TreeMap<>();
         List<String> lines = Files.readAllLines(paramFile.toPath());
         for (String line : lines) {
             String[] opts = line.split("=");
@@ -34,17 +34,17 @@ public class Helpers {
         return params;
     }
 
-    public static Map<String,String> basicParser(File toParse, String separatorText) throws IOException {
-        Map<String, String> docs = new HashMap<>();
+    public static Map<Integer,String> basicParser(File toParse, String separatorText) throws IOException {
+        Map<Integer, String> docs = new TreeMap<>();
         List<String> lines = Files.readAllLines(toParse.toPath());
-        String currentId = "";
+        Integer currentId = 0;
         StringBuilder stringBuilder = new StringBuilder();
         for (String line : lines) {
             if(line.startsWith(separatorText)) {
-                addDocument(stringBuilder,currentId,docs);
+                addDocument(stringBuilder,currentId, docs);
                 stringBuilder.setLength(0); // Clearing the string builder
                 String[] headers = cleanSpaces(line).split(" "); // Gets the headers of the document
-                currentId = headers[1]; // Getting the doc id, second text after the separator (heuristic)
+                currentId = Integer.valueOf(headers[1]); // Getting the doc id, second text after the separator (heuristic)
             } else{
                 stringBuilder.append(line.trim());
             }
@@ -53,7 +53,7 @@ public class Helpers {
         return docs;
     }
 
-    public static void addDocument(StringBuilder sb, String docId, Map<String,String> docs)
+    public static void addDocument(StringBuilder sb, Integer docId, Map<Integer,String> docs)
     {
         if(sb.length()!= 0)
         {

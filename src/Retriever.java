@@ -5,13 +5,11 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Retriever {
     private StandardAnalyzer analyzer;
@@ -21,14 +19,18 @@ public class Retriever {
         this.analyzer = analyzer;
     }
 
-    public Map<String, List> retrieve(Map<String,String> queries) throws ParseException, IOException {
-        Map<String, List> results = new HashMap<>();
-        for (Map.Entry<String, String> queryEntry : queries.entrySet()) {
-            List<Integer> docIds = new LinkedList<>();
+    public Map<Integer, List> retrieve(Map<Integer,String> queries) throws ParseException, IOException {
+        Similarity sim = new BasicSimilarity();
 
+        IndexReader reader = DirectoryReader.open(index);
+        IndexSearcher searcher = new IndexSearcher(reader);
+        searcher.setSimilarity(sim);
+
+        Map<Integer, List> results = new TreeMap<>();
+        for (Map.Entry<Integer, String> queryEntry : queries.entrySet()) {
+
+            List<Integer> docIds = new LinkedList<>();
             Query q = new QueryParser(Helpers.TEXT_FIELD, analyzer).parse(queryEntry.getValue()); // this is already removing stopwords
-            IndexReader reader = DirectoryReader.open(index);
-            IndexSearcher searcher = new IndexSearcher(reader);
             TopDocs docs = searcher.search(q, 10);
             ScoreDoc[] hits = docs.scoreDocs;
 

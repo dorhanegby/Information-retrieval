@@ -12,16 +12,16 @@ public class Runner {
         File queryFile = new File(params.get("queryFile"));
         File docsFile = new File(params.get("docsFile"));
         String searchAlgo = params.get("retrievalAlgorithm");
-        Map<String,String> documentsMap = Helpers.basicParser(docsFile,"*TEXT");
-        Map<String,String> queriesMap = Helpers.basicParser(queryFile, "*FIND");
+        Map<Integer,String> documentsMap = Helpers.basicParser(docsFile,"*TEXT");
+        Map<Integer,String> queriesMap = Helpers.basicParser(queryFile, "*FIND");
 
         IndexDocs index = new IndexDocs(documentsMap);
 
-        Map<String,List> results;
+        Map<Integer,List> results;
         Retriever masterRetriever = new Retriever(index.getIndex(),index.getAnalyzer());
 
         results = masterRetriever.retrieve(queriesMap);
-        Outputter.output(outputFile,results);
+        Outputter.output(outputFile, results);
 
 
         System.out.println("Fin");

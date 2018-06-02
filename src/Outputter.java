@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Outputter {
-    public static void output(File outputFile, Map<String,List> results) throws IOException {
+    public static void output(File outputFile, Map<Integer,List> results) throws IOException {
         FileOutputStream fos = new FileOutputStream(outputFile);
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 
-        for (Map.Entry<String,List> pair : results.entrySet()){
+        for (Map.Entry<Integer, List> pair : results.entrySet()){
             //iterate over the pairs
             List docIds = pair.getValue();
             docIds.sort(Comparator.naturalOrder());
