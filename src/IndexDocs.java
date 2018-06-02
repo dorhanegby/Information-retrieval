@@ -20,12 +20,23 @@ import java.util.List;
 import java.util.Map;
 
 public class IndexDocs {
+    private StandardAnalyzer analyzer;
+    private Directory index ;
+
+    public StandardAnalyzer getAnalyzer() {
+        return analyzer;
+    }
+
+    public Directory getIndex() {
+        return index;
+    }
+
 
     public IndexDocs(Map<String,String> documentsMap) throws Exception {
         CharArraySet stopList = Helpers.getStopList();
 
-        StandardAnalyzer analyzer = new StandardAnalyzer(stopList); // TODO: add method getAnalyzer
-        Directory index = new RAMDirectory(); // TODO: add method getDirectory
+        this.analyzer = new StandardAnalyzer(stopList);
+        this.index = new RAMDirectory();
 
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
@@ -33,32 +44,7 @@ public class IndexDocs {
         for (Map.Entry<String, String> doc : documentsMap.entrySet()) {
             addDoc(w, doc.getValue(), doc.getKey());
         }
-
         w.close();
-
-        String querystr = "p KENNEDY ADMINISTRATION PRESSURE ON NGO DINH DIEM TO STOP\n" +
-                "\n" +
-                "SUPPRESSING THE BUDDHISTS .";
-        Query q = new QueryParser(Helpers.TEXT_FIELD, analyzer).parse(querystr);
-        int hitsPerPage = 18;
-        IndexReader reader = DirectoryReader.open(index);
-        IndexSearcher searcher = new IndexSearcher(reader);
-        TopDocs docs = searcher.search(q,  Integer.MAX_VALUE);
-
-        ScoreDoc[] hits = docs.scoreDocs;
-
-        System.out.println("Found " + hits.length + " hits.");
-        for(int i=0;i<hits.length;++i) {
-            int docId = hits[i].doc;
-            Document d = searcher.doc(docId);
-            Explanation a = searcher.explain(q,docId);
-            System.out.println("*************************************************************************************");
-            System.out.println((i + 1) + ". " + d.get(Helpers.DOC_ID) + " score: " + hits[i].score);
-            System.out.println(a);
-            System.out.println("*************************************************************************************");
-        }
-
-
     }
 
     private static void addDoc(IndexWriter w, String value, String docID) throws Exception {
