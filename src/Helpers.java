@@ -11,7 +11,10 @@ public class Helpers {
     public static final String TEXT_FIELD = "content";
 
     public static CharArraySet getStopList() {
-        String[] listOfWords = {"the", "of", "a", "to", "in", "and", "for", "that", "with", "was", "on", "last", "by", "but", "as", "at", "his", "from", "week", "is"};
+        // TODO: Tweak stop words to maximize recall
+        String[] listOfWords = {"an","are","be","if","into","it","no","not","or","such","their","then","there","these",
+                "they","this","will","the","of","a","to","in","and","for","that","with","was","on","last","by",
+                "but","as","at","his","from","week","is"};
 
         List<String> list = new ArrayList<String>(Arrays.asList(listOfWords));
         return new CharArraySet(list, true);
