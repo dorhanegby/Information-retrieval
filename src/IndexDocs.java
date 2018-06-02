@@ -8,12 +8,8 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.misc.TermStats;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 
@@ -44,18 +40,22 @@ public class IndexDocs {
                 "\n" +
                 "SUPPRESSING THE BUDDHISTS .";
         Query q = new QueryParser(Helpers.TEXT_FIELD, analyzer).parse(querystr);
-
         int hitsPerPage = 18;
         IndexReader reader = DirectoryReader.open(index);
         IndexSearcher searcher = new IndexSearcher(reader);
-        TopDocs docs = searcher.search(q, hitsPerPage);
+        TopDocs docs = searcher.search(q,  Integer.MAX_VALUE);
+
         ScoreDoc[] hits = docs.scoreDocs;
 
         System.out.println("Found " + hits.length + " hits.");
         for(int i=0;i<hits.length;++i) {
             int docId = hits[i].doc;
             Document d = searcher.doc(docId);
+            Explanation a = searcher.explain(q,docId);
+            System.out.println("*************************************************************************************");
             System.out.println((i + 1) + ". " + d.get(Helpers.DOC_ID) + " score: " + hits[i].score);
+            System.out.println(a);
+            System.out.println("*************************************************************************************");
         }
 
 
