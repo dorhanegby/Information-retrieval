@@ -26,27 +26,25 @@ public class Retriever {
         this.analyzer = analyzer;
         this.reader = DirectoryReader.open(index);
         this.searcher = new IndexSearcher(reader);
-
         this.SCORE_THRESHOLD = threshold; // TODO: DELTE THIS AFTER maximization
-
     }
-    public Map<Integer, List> retrieve(Map<Integer,String> queries) throws ParseException, IOException {
+
+    public Map<Integer, List<Integer>> retrieve(Map<Integer,String> queries) throws ParseException, IOException {
         return this.retrieve(queries,BasicSimilarity.Tf.LOG_NORMALIZATION, BasicSimilarity.Idf.IDF);
     }
 
-    public Map<Integer, List> retrieve(Map<Integer,String> queries, BasicSimilarity.Tf tf, BasicSimilarity.Idf idf) throws ParseException, IOException {
+    public Map<Integer, List<Integer>> retrieve(Map<Integer,String> queries, BasicSimilarity.Tf tf, BasicSimilarity.Idf idf) throws ParseException, IOException {
         Similarity sim = new BasicSimilarity(tf, idf);
 
         searcher.setSimilarity(sim);
 
-        Map<Integer, List> results = new TreeMap<>();
+        Map<Integer, List<Integer>> results = new TreeMap<>();
         for (Map.Entry<Integer, String> queryEntry : queries.entrySet()) {
 
             List<Integer> docIds = new LinkedList<>();
             Query q = new QueryParser(Helpers.TEXT_FIELD, analyzer).parse(queryEntry.getValue()); // this is already removing stopwords
             TopDocs docs = searcher.search(q, 20);
             ScoreDoc[] hits = docs.scoreDocs;
-            System.out.println("Query n: "+ queryEntry.getKey()); // TODO: DELETE THIS
             for (int i = 0; i < hits.length; ++i) {
                 int docId = hits[i].doc;
                 Document d = searcher.doc(docId);
@@ -54,17 +52,10 @@ public class Retriever {
                 if(score < SCORE_THRESHOLD) {
                     break;
                 }
-
                 String actualDocId = d.get(Helpers.DOC_ID);
-
                 docIds.add(Integer.valueOf(actualDocId));
-
-                System.out.println(actualDocId+" | score: " + score); // TODO: DELETE THIS
             }
-
             results.put(queryEntry.getKey(), docIds);
-            System.out.println("++++++++++++++++++++++++++++++++++++"); // TODO: DELETE THIS
-
         }
         return results;
     }

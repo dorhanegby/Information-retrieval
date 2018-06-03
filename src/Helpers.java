@@ -44,13 +44,29 @@ public class Helpers {
                 addDocument(stringBuilder,currentId, docs);
                 stringBuilder.setLength(0); // Clearing the string builder
                 String[] headers = cleanSpaces(line).split(" "); // Gets the headers of the document
-                currentId = Integer.valueOf(headers[1]); // Getting the doc id, second text after the separator (heuristic)
+                currentId = Integer.valueOf(headers[1]); // Getting the doc id, second text after the separator (heuristic) not taking date and page
             } else{
                 stringBuilder.append(line.trim());
             }
         }
         addDocument(stringBuilder,currentId,docs); // When we finish reading, we need to add the last text to the last document
         return docs;
+    }
+    public static Map<Integer,List<Integer>> truthParser(File toParse) throws IOException {
+        Map<Integer, List<Integer>> truth = new TreeMap<>();
+        List<String> lines = Files.readAllLines(toParse.toPath());
+        for (String line : lines) {
+            String[] values = cleanSpaces(line).split(" ");
+            if(values.length > 1) {
+                Integer key  = Integer.valueOf(values[0]); // First number is the query number
+                List<Integer> trueIds = new LinkedList<>();
+                for (int i = 1; i < values.length; i++) {
+                    trueIds.add(Integer.valueOf(values[i]));
+                }
+                truth.put(key, trueIds);
+            }
+        }
+        return truth;
     }
 
     public static void addDocument(StringBuilder sb, Integer docId, Map<Integer,String> docs)
