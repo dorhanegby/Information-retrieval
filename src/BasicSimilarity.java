@@ -18,8 +18,9 @@ public class BasicSimilarity extends SimilarityBase {
         long N = basicStats.getNumberOfDocuments(); // Total number of docs
         long nt = basicStats.getDocFreq(); // Total number of docs that contain the term.
 
-        float tf = (float) Math.log(1 + ftd);
-        float idf = (float) Math.log(1 + (N / nt));
+        float tf = getTF(ftd);
+        float idf = getIDF(N, nt);
+
         return tf * idf;
     }
 
