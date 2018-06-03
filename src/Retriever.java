@@ -13,7 +13,7 @@ import java.util.*;
 
 public class Retriever {
 
-    private static final int SCORE_THRESHOLD = 10;
+    private int SCORE_THRESHOLD = 10;
 
     private StandardAnalyzer analyzer;
     private Directory index ;
@@ -21,11 +21,13 @@ public class Retriever {
     IndexReader reader;
     IndexSearcher searcher;
 
-    public Retriever(Directory index, StandardAnalyzer analyzer) throws IOException {
+    public Retriever(Directory index, StandardAnalyzer analyzer, int threshold) throws IOException {
         this.index = index;
         this.analyzer = analyzer;
         this.reader = DirectoryReader.open(index);
         this.searcher = new IndexSearcher(reader);
+
+        this.SCORE_THRESHOLD = threshold; // TODO: DELTE THIS AFTER maximization
 
     }
     public Map<Integer, List> retrieve(Map<Integer,String> queries) throws ParseException, IOException {
