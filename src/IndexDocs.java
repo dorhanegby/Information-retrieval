@@ -1,3 +1,4 @@
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -20,10 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 public class IndexDocs {
-    private StandardAnalyzer analyzer;
+    private Analyzer analyzer;
     private Directory index ;
 
-    public StandardAnalyzer getAnalyzer() {
+    public Analyzer getAnalyzer() {
         return analyzer;
     }
 
@@ -35,7 +36,7 @@ public class IndexDocs {
     public IndexDocs(Map<Integer,String> documentsMap) throws Exception {
         CharArraySet stopList = Helpers.getStopList();
 
-        this.analyzer = new StandardAnalyzer(stopList);
+        this.analyzer = new PorterAnalyzer(stopList);
         this.index = new RAMDirectory();
 
         IndexWriterConfig config = new IndexWriterConfig(analyzer);

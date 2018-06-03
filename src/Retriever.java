@@ -1,3 +1,4 @@
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -15,13 +16,13 @@ public class Retriever {
 
     private double SCORE_THRESHOLD;
 
-    private StandardAnalyzer analyzer;
+    private Analyzer analyzer;
     private Directory index ;
 
     IndexReader reader;
     IndexSearcher searcher;
 
-    public Retriever(Directory index, StandardAnalyzer analyzer, double threshold) throws IOException {
+    public Retriever(Directory index, Analyzer analyzer, double threshold) throws IOException {
         this.index = index;
         this.analyzer = analyzer;
         this.reader = DirectoryReader.open(index);

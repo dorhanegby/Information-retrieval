@@ -2,7 +2,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 public class Evaluator {
-    final static double ALPHA = 0.5;
+    final static double ALPHA = 0.5d;
 
     Map<Integer,List<Integer>> truth;
     Map<Integer,List<Integer>> results;
