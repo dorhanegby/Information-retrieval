@@ -55,30 +55,22 @@ public class BasicSimilarity extends SimilarityBase {
         return 1.0f;
     }
 
+    public enum Tf {
+        BINARY,
+        RAW_COUNT,
+        LOG_NORMALIZATION,
+    }
+
     public enum Idf {
         UNARY,
         IDF,
         IDF_SMOOTH,
-        // IDF_MAX,
         PROBABILISTIC_IDF
-
-
     }
-
-    public enum Tf {
-        BINARY,
-        RAW_COUNT,
-        // TERM_FREQUENCY,
-        LOG_NORMALIZATION,
-        // DOUBLE_NORMALIZATION_05,
-        // DOUBLE_NORMALIZATION_K
-
-    }
-
 
 
     @Override
     public String toString() {
-        return null;
+        return "TF: " + tf + " | IDF: " + idf;
     }
 }
