@@ -13,7 +13,7 @@ import java.util.*;
 
 public class Retriever {
 
-    private int SCORE_THRESHOLD = 10;
+    private double SCORE_THRESHOLD;
 
     private StandardAnalyzer analyzer;
     private Directory index ;
@@ -21,7 +21,7 @@ public class Retriever {
     IndexReader reader;
     IndexSearcher searcher;
 
-    public Retriever(Directory index, StandardAnalyzer analyzer, int threshold) throws IOException {
+    public Retriever(Directory index, StandardAnalyzer analyzer, double threshold) throws IOException {
         this.index = index;
         this.analyzer = analyzer;
         this.reader = DirectoryReader.open(index);
