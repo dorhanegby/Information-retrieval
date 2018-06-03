@@ -17,16 +17,24 @@ public class Retriever {
 
     private StandardAnalyzer analyzer;
     private Directory index ;
-    public Retriever(Directory index, StandardAnalyzer analyzer) {
+
+    IndexReader reader;
+    IndexSearcher searcher;
+
+    public Retriever(Directory index, StandardAnalyzer analyzer) throws IOException {
         this.index = index;
         this.analyzer = analyzer;
+        this.reader = DirectoryReader.open(index);
+        this.searcher = new IndexSearcher(reader);
+
+    }
+    public Map<Integer, List> retrieve(Map<Integer,String> queries) throws ParseException, IOException {
+        return this.retrieve(queries,BasicSimilarity.Tf.LOG_NORMALIZATION, BasicSimilarity.Idf.IDF);
     }
 
-    public Map<Integer, List> retrieve(Map<Integer,String> queries) throws ParseException, IOException {
-        Similarity sim = new BasicSimilarity();
+    public Map<Integer, List> retrieve(Map<Integer,String> queries, BasicSimilarity.Tf tf, BasicSimilarity.Idf idf) throws ParseException, IOException {
+        Similarity sim = new BasicSimilarity(tf, idf);
 
-        IndexReader reader = DirectoryReader.open(index);
-        IndexSearcher searcher = new IndexSearcher(reader);
         searcher.setSimilarity(sim);
 
         Map<Integer, List> results = new TreeMap<>();
