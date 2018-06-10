@@ -46,11 +46,11 @@ public class Retriever {
             Query q = new QueryParser(Helpers.TEXT_FIELD, analyzer).parse(queryEntry.getValue()); // this is already removing stopwords
             TopDocs docs = searcher.search(q, 20);
             ScoreDoc[] hits = docs.scoreDocs;
-            for (int i = 0; i < hits.length; ++i) {
-                int docId = hits[i].doc;
+            for (ScoreDoc hit : hits) {
+                int docId = hit.doc;
                 Document d = searcher.doc(docId);
-                Float score = hits[i].score;
-                if(score < SCORE_THRESHOLD) {
+                Float score = hit.score;
+                if (score < SCORE_THRESHOLD) {
                     break;
                 }
                 String actualDocId = d.get(Helpers.DOC_ID);
