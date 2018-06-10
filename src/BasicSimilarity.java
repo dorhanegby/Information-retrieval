@@ -12,7 +12,6 @@ public class BasicSimilarity extends SimilarityBase {
         this.idf = idf;
     }
 
-    // TODO: verify this formula
     @Override
     protected float score(BasicStats basicStats, float ftd, float docLength) {
         long N = basicStats.getNumberOfDocuments(); // Total number of docs

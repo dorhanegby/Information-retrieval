@@ -21,37 +21,16 @@ public class Runner {
 
   Map<Integer, List<Integer>> results;
 
-  double maxFScore = 0;
-  double maxT = 0;
-  BasicSimilarity.Tf maxTF = BasicSimilarity.Tf.LOG_NORMALIZATION;
-  BasicSimilarity.Idf maxIdf = BasicSimilarity.Idf.IDF;
-  for (double t = 0.1; t <= 20; t+=0.1) {
-   for (BasicSimilarity.Idf idf : BasicSimilarity.Idf.values()) {
-    for (BasicSimilarity.Tf tf : BasicSimilarity.Tf.values()) {
-     Retriever masterRetriever = new Retriever(index.getIndex(), index.getAnalyzer(), t);
+  Retriever masterRetriever = new Retriever(index.getIndex(), index.getAnalyzer());
 
-     results = masterRetriever.retrieve(queriesMap, tf, idf);
-     //Outputter.output(outputFile, results);
+  results = masterRetriever.retrieve(queriesMap, BasicSimilarity.Tf.LOG_NORMALIZATION, BasicSimilarity.Idf.PROBABILISTIC_IDF);
+  Outputter.output(outputFile, results);
 
-     Evaluator evaluator = new Evaluator(truthMap, results);
-     double[] evalResults = evaluator.calcRPF();
-     double fScore = evalResults[2];
-     //System.out.println(fScore);
-     if (maxFScore < fScore) {
-      maxFScore = fScore;
-      maxTF = tf;
-      maxIdf = idf;
-      maxT = t;
-     }
-    }
-   }
-  }
-  System.out.println("MAX: " + maxFScore);
-  System.out.println("TF: " + maxTF);
-  System.out.println("IDF: " + maxIdf);
-  System.out.println("T: " + maxT);
-  System.out.println("Fin");
+  Evaluator evaluator = new Evaluator(truthMap, results);
+  double[] evalResults = evaluator.calcRPF();
+  double fScore = evalResults[2];
 
+  System.out.println("fscore: " + fScore);
 
  }
 }

@@ -14,27 +14,26 @@ import java.util.*;
 
 public class Retriever {
 
-    private double SCORE_THRESHOLD;
+    private double SCORE_THRESHOLD = 8.7d;
 
     private Analyzer analyzer;
-    private Directory index ;
+    private Directory index;
 
     IndexReader reader;
     IndexSearcher searcher;
 
-    public Retriever(Directory index, Analyzer analyzer, double threshold) throws IOException {
+    public Retriever(Directory index, Analyzer analyzer) throws IOException {
         this.index = index;
         this.analyzer = analyzer;
         this.reader = DirectoryReader.open(index);
         this.searcher = new IndexSearcher(reader);
-        this.SCORE_THRESHOLD = threshold; // TODO: DELTE THIS AFTER maximization
     }
 
-    public Map<Integer, List<Integer>> retrieve(Map<Integer,String> queries) throws ParseException, IOException {
-        return this.retrieve(queries,BasicSimilarity.Tf.LOG_NORMALIZATION, BasicSimilarity.Idf.IDF);
+    public Map<Integer, List<Integer>> retrieve(Map<Integer, String> queries) throws ParseException, IOException {
+        return this.retrieve(queries, BasicSimilarity.Tf.LOG_NORMALIZATION, BasicSimilarity.Idf.IDF);
     }
 
-    public Map<Integer, List<Integer>> retrieve(Map<Integer,String> queries, BasicSimilarity.Tf tf, BasicSimilarity.Idf idf) throws ParseException, IOException {
+    public Map<Integer, List<Integer>> retrieve(Map<Integer, String> queries, BasicSimilarity.Tf tf, BasicSimilarity.Idf idf) throws ParseException, IOException {
         Similarity sim = new BasicSimilarity(tf, idf);
 
         searcher.setSimilarity(sim);

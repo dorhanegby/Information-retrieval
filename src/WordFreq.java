@@ -21,7 +21,4 @@ public class WordFreq {
     private static TermStats[] calcHighFreqTerms(HighFreqTerms highFreqTerms, IndexReader indexReader) throws Exception {
         return highFreqTerms.getHighFreqTerms(indexReader, 20, Helpers.TEXT_FIELD, new HighFreqTerms.DocFreqComparator());
     }
-
-
-
 }
