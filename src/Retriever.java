@@ -1,5 +1,5 @@
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.classification.document.KNearestNeighborDocumentClassifier;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -21,22 +21,23 @@ public class Retriever {
 
     IndexReader reader;
     IndexSearcher searcher;
+    KNearestNeighborDocumentClassifier classifier;
 
-    public Retriever(Directory index, Analyzer analyzer) throws IOException {
+    public Retriever(Directory index, Analyzer analyzer, BasicSimilarity.Tf tf, BasicSimilarity.Idf idf, int kNeighbors) throws IOException {
         this.index = index;
         this.analyzer = analyzer;
         this.reader = DirectoryReader.open(index);
         this.searcher = new IndexSearcher(reader);
-    }
 
-    public Map<Integer, List<Integer>> retrieve(Map<Integer, String> queries) throws ParseException, IOException {
-        return this.retrieve(queries, BasicSimilarity.Tf.LOG_NORMALIZATION, BasicSimilarity.Idf.IDF);
-    }
-
-    public Map<Integer, List<Integer>> retrieve(Map<Integer, String> queries, BasicSimilarity.Tf tf, BasicSimilarity.Idf idf) throws ParseException, IOException {
         Similarity sim = new BasicSimilarity(tf, idf);
 
         searcher.setSimilarity(sim);
+
+        this.classifier = new KNearestNeighborDocumentClassifier(reader, sim, null, kNeighbors, 0, 0, "class", null, "content", "title");
+    }
+
+    public Map<Integer, List<Integer>> retrieve(Map<Integer, String> queries) throws ParseException, IOException {
+
 
         Map<Integer, List<Integer>> results = new TreeMap<>();
         for (Map.Entry<Integer, String> queryEntry : queries.entrySet()) {
