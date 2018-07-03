@@ -51,6 +51,15 @@ public class Helpers {
         addDocument(stringBuilder, currentId, docs); // When we finish reading, we need to add the last text to the last document
         return docs;
     }
+    public static Map<Integer, Map<String, String>> csvParser(File toParse, String[] headears) throws IOException {
+        Map<Integer, Map<String, String>> docs = new TreeMap<>();
+        List<String> lines = Files.readAllLines(toParse.toPath());
+        for (String line : lines) {
+            String[] lineValues = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+            addDocument(lineValues, headears, docs, line);
+        }
+        return docs;
+    }
 
     public static Map<Integer, List<Integer>> truthParser(File toParse) throws IOException {
         Map<Integer, List<Integer>> truth = new TreeMap<>();
@@ -73,6 +82,17 @@ public class Helpers {
         if (sb.length() != 0) {
             docs.put(docId, sb.toString()); // Adding the new document
         }
+    }
+    public static void addDocument(String[] lineValues, String[] headers, Map<Integer, Map<String,String>> docs, String line) throws IOException {
+        Map<String, String> values = new TreeMap<>();
+        if(headers.length != lineValues.length){
+            throw new IOException("Oh no! Headears and line value dont match!");
+        }
+        for (int i = 0; i < headers.length ; i++) {
+            values.put(headers[i], lineValues[i]);
+        }
+        Integer docId = Integer.valueOf(values.get("docId"));
+        docs.put(docId, values);
     }
 
     public static String cleanSpaces(String str) {

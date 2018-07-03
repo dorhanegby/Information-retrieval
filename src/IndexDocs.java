@@ -25,7 +25,22 @@ public class IndexDocs {
     }
 
 
-    public IndexDocs(Map<Integer, String> documentsMap) throws Exception {
+//
+//    public IndexDocs(Map<Integer, String> documentsMap) throws Exception {
+//        CharArraySet stopList = Helpers.getStopList();
+//
+//        this.analyzer = new StandardAnalyzer(stopList); // PorterAnalyzer(stopList);
+//        this.index = new RAMDirectory();
+//
+//        IndexWriterConfig config = new IndexWriterConfig(analyzer);
+//
+//        IndexWriter w = new IndexWriter(index, config);
+//        for (Map.Entry<Integer, String> doc : documentsMap.entrySet()) {
+//            addDoc(w, doc.getValue(), doc.getKey().toString());
+//        }
+//        w.close();
+//    }
+    public IndexDocs( Map<Integer, Map<String,String>> documentsMap) throws Exception{
         CharArraySet stopList = Helpers.getStopList();
 
         this.analyzer = new StandardAnalyzer(stopList); // PorterAnalyzer(stopList);
@@ -34,10 +49,18 @@ public class IndexDocs {
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
         IndexWriter w = new IndexWriter(index, config);
-        for (Map.Entry<Integer, String> doc : documentsMap.entrySet()) {
-            addDoc(w, doc.getValue(), doc.getKey().toString());
+        for (Map.Entry<Integer, Map<String,String>> doc : documentsMap.entrySet()) {
+            addDoc(w, doc.getValue());
         }
         w.close();
+
+    }
+    private static void addDoc(IndexWriter w, Map<String,String> values) throws Exception {
+        Document doc = new Document();
+        for (Map.Entry<String,String> entry : values.entrySet()) {
+            doc.add(new TextField(entry.getKey(), entry.getValue(), Field.Store.YES));
+        }
+        w.addDocument(doc);
     }
 
     private static void addDoc(IndexWriter w, String value, String docID) throws Exception {

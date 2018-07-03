@@ -1,4 +1,4 @@
-queryFile=hw3_data/queries.txt
-docsFile=hw3_data/docs.txt
-outputFile=out/output.txt
-retrievalAlgorithm=basic
+trainFile=hw3_data/train.csv
+testFile=hw3_data/test.csv
+outputFile=out/out1.csv 
+k=20
