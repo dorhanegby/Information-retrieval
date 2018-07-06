@@ -80,4 +80,13 @@ public class Retriever {
         }
         return results;
     }
+    public KNearestNeighborDocumentClassifier getClassifier()
+    {
+        return this.classifier;
+    }
+    public int classify(Document doc) throws Exception
+    {
+       return Integer.valueOf(this.classifier.assignClass(doc).getAssignedClass().utf8ToString());
+    }
+
 }
