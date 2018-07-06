@@ -33,7 +33,27 @@ public class Retriever {
 
         searcher.setSimilarity(sim);
 
-        this.classifier = new KNearestNeighborDocumentClassifier(reader, sim, null, kNeighbors, 0, 0, "class", null, "content", "title");
+        Map<String, Analyzer> field2analyzer = new HashMap<>();
+        field2analyzer.put("content", analyzer);
+        field2analyzer.put("title", analyzer);
+        field2analyzer.put("docId", analyzer);
+        field2analyzer.put("class", analyzer);
+
+        this.classifier = new KNearestNeighborDocumentClassifier(reader, sim, null, kNeighbors, 0, 0, "class", field2analyzer, "content", "title");
+    }
+
+    public double checkK(Directory docs) throws IOException {
+        IndexReader docReader = DirectoryReader.open(docs);
+        int mistakes = 0;
+        for (int i = 0; i < docReader.numDocs(); i++) {
+            Document doc = docReader.document(i);
+            String predicted = this.classifier.assignClass(doc).getAssignedClass().utf8ToString();
+            String actual = doc.get("class");
+            if(!predicted.equals(actual)) {
+                mistakes++;
+            }
+        }
+        return (double) mistakes / docReader.numDocs();
     }
 
     public Map<Integer, List<Integer>> retrieve(Map<Integer, String> queries) throws ParseException, IOException {

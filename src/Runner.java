@@ -38,11 +38,20 @@ public class Runner {
 
 
   IndexDocs index = new IndexDocs(trainMap);
+  IndexDocs validDocs = new IndexDocs(validMap);
 
   Map<Integer, List<Integer>> results;
 
-  Retriever masterRetriever = new Retriever(index.getIndex(), index.getAnalyzer(), BasicSimilarity.Tf.LOG_NORMALIZATION, BasicSimilarity.Idf.PROBABILISTIC_IDF, kNeighbors);
-  System.out.println();
+  for (int i = 0; i <= 20; i++) {
+
+   // TODO: Confusion Matrix @Julian
+   Retriever masterRetriever = new Retriever(index.getIndex(), index.getAnalyzer(), BasicSimilarity.Tf.LOG_NORMALIZATION, BasicSimilarity.Idf.PROBABILISTIC_IDF, i);
+   System.out.println("Test for k = " + i);
+   double error = masterRetriever.checkK(validDocs.getIndex());
+   System.out.println("Valid Error = " + error);
+
+  }
+
  }
 }
 
