@@ -15,7 +15,8 @@ public class Evaluator {
     Map<Integer, List<Integer>> truth;
     Map<Integer, List<Integer>> results;
     IndexReader reader;
-    ConfusionMatrixGenerator.ConfusionMatrix matrix;
+    ConfusionMatrixGenerator.ConfusionMatrix matrixContent;
+    ConfusionMatrixGenerator.ConfusionMatrix matrixTitle;
 
     public Evaluator(Map<Integer, List<Integer>> truth, Map<Integer, List<Integer>> results) {
         this.truth = truth;
@@ -25,21 +26,11 @@ public class Evaluator {
     {
         this.reader = DirectoryReader.open(docsToEvaluate);
         System.out.println("Creating Confusion Matrix...");
-        this.matrix = ConfusionMatrixGenerator.getConfusionMatrix(reader, classifier,"class", "content" , 300 *1000);
+        this.matrixContent = ConfusionMatrixGenerator.getConfusionMatrix(reader, classifier,"class", "content" , 300 * 1000);
+        this.matrixTitle = ConfusionMatrixGenerator.getConfusionMatrix(reader, classifier,"class", "title" , 300 * 1000);
         System.out.println("Done Creating Confusion Matrix");
     }
 
-    /**
-     *
-     * TODO: a function that returns Map<Integer, Map<String, String>> results
-     * it should contain { docId: "", predicted: "", actual: "" }
-     * you can have the keys being the docIds, should be a tree map sorted by docIds
-     * @return
-     */
-
-    public TreeMap<Integer, Map<String, String>> getResults() {
-        return null;
-    }
 
     public double[] calcRPF() {
         double totalRecall = 0;

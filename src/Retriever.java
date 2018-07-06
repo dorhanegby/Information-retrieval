@@ -21,7 +21,7 @@ public class Retriever {
 
     private Analyzer analyzer;
     private Directory index;
-    private double TITLE_ALPHA = 0.6;
+    private double TITLE_ALPHA = 0.2;
     private double CONTENT_ALPHA = 1 - TITLE_ALPHA;
 
     IndexReader reader;
