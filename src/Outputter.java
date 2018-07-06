@@ -24,4 +24,25 @@ public class Outputter {
         }
         bw.close();
     }
+
+    public static void outputKnn(File outputFile, Map<Integer, Map<String, String>> results) throws IOException {
+        FileOutputStream fos = new FileOutputStream(outputFile);
+
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+
+        for(Map.Entry<Integer, Map<String, String>> doc : results.entrySet()) {
+
+            Map<String, String> docMap = doc.getValue();
+
+            String docId =  docMap.get("docId"); // doc.getKey().toString()
+            String predicted =  docMap.get("predicted");
+            String actual =  docMap.get("actual");
+
+            bw.write(docId + "," + predicted + "," + actual);
+            bw.newLine();
+        }
+
+        bw.close();
+
+    }
 }

@@ -49,8 +49,8 @@ public class Runner {
 //   System.out.println("Test for k = " + i);
 
 
-//   Evaluator eva = new Evaluator(validDocs.getIndex(), masterRetriever.getClassifier());
-      System.out.println("Yikes");
+   Evaluator eva = new Evaluator(validDocs.getIndex(), masterRetriever.getClassifier());
+   System.out.println("Yikes");
    double error = masterRetriever.checkK(validDocs.getIndex());
    System.out.println("Valid Error = " + error);
 

@@ -7,6 +7,7 @@ import org.apache.lucene.store.Directory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Evaluator {
     final static double ALPHA = 0.5d;
@@ -24,8 +25,20 @@ public class Evaluator {
     {
         System.out.println("ss");
         this.reader = DirectoryReader.open(docsToEvaluate);
-        this.matrix = ConfusionMatrixGenerator.getConfusionMatrix(reader,classifier,"class", "content" , 300 *1000);
+        this.matrix = ConfusionMatrixGenerator.getConfusionMatrix(reader,classifier,"class", null , 300 *1000);
         System.out.println("sarlanga");
+    }
+
+    /**
+     *
+     * TODO: a function that returns Map<Integer, Map<String, String>> results
+     * it should contain { docId: "", predicted: "", actual: "" }
+     * you can have the keys being the docIds, should be a tree map sorted by docIds
+     * @return
+     */
+
+    public TreeMap<Integer, Map<String, String>> getResults() {
+        return null;
     }
 
     public double[] calcRPF() {
