@@ -42,10 +42,17 @@ public class Runner {
         System.out.println("Indexing...");
         IndexDocs index = new IndexDocs(trainMap);
         IndexDocs validDocs = new IndexDocs(validMap);
+        IndexDocs testDocs = new IndexDocs(testMap);
         System.out.println("Done Indexing");
 
         Retriever masterRetriever = new Retriever(index.getIndex(), validDocs.getAnalyzer(), BasicSimilarity.Tf.LOG_NORMALIZATION, BasicSimilarity.Idf.PROBABILISTIC_IDF, kNeighbors);
 
+
+        Map<Integer, Map<String,String>> validResults = masterRetriever.classify(testDocs.getIndex());
+        System.out.println("Starting to output");
+        Outputter out = new Outputter();
+        out.outputKnn(outputFile,validResults);
+        System.out.println("Finished to output");
 
         Evaluator eva = new Evaluator(validDocs.getIndex(), masterRetriever.getClassifier());
     }

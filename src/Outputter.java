@@ -34,7 +34,7 @@ public class Outputter {
 
             Map<String, String> docMap = doc.getValue();
 
-            String docId =  docMap.get("docId"); // doc.getKey().toString()
+            String docId =   doc.getKey().toString();
             String predicted =  docMap.get("predicted");
             String actual =  docMap.get("actual");
 
