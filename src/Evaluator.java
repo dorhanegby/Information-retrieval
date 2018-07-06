@@ -23,10 +23,10 @@ public class Evaluator {
     }
     public Evaluator(Directory docsToEvaluate, Classifier classifier) throws Exception
     {
-        System.out.println("ss");
         this.reader = DirectoryReader.open(docsToEvaluate);
-        this.matrix = ConfusionMatrixGenerator.getConfusionMatrix(reader,classifier,"class", null , 300 *1000);
-        System.out.println("sarlanga");
+        System.out.println("Creating Confusion Matrix...");
+        this.matrix = ConfusionMatrixGenerator.getConfusionMatrix(reader, classifier,"class", "content" , 300 *1000);
+        System.out.println("Done Creating Confusion Matrix");
     }
 
     /**

@@ -1,4 +1,5 @@
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.classification.KNearestNeighborClassifier;
 import org.apache.lucene.classification.document.KNearestNeighborDocumentClassifier;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -21,7 +22,7 @@ public class Retriever {
 
     IndexReader reader;
     IndexSearcher searcher;
-    KNearestNeighborDocumentClassifier classifier;
+    KNearestNeighborClassifier classifier;
 
     public Retriever(Directory index, Analyzer analyzer, BasicSimilarity.Tf tf, BasicSimilarity.Idf idf, int kNeighbors) throws IOException {
         this.index = index;
@@ -39,22 +40,23 @@ public class Retriever {
         field2analyzer.put("docId", analyzer);
         field2analyzer.put("class", analyzer);
 
-        this.classifier = new KNearestNeighborDocumentClassifier(reader, sim, null, kNeighbors, 0, 0, "class", field2analyzer, "content", "title");
+        this.classifier = new KNearestNeighborClassifier(reader, sim, analyzer, null, kNeighbors, 0, 0, "class", "content", "title"); // KNearestNeighborDocumentClassifier(reader, sim, null, kNeighbors, 0, 0, "class", field2analyzer, "content", "title");
     }
 
-    public double checkK(Directory docs) throws IOException {
-        IndexReader docReader = DirectoryReader.open(docs);
-        int mistakes = 0;
-        for (int i = 0; i < docReader.numDocs(); i++) {
-            Document doc = docReader.document(i);
-            String predicted = this.classifier.assignClass(doc).getAssignedClass().utf8ToString();
-            String actual = doc.get("class");
-            if(!predicted.equals(actual)) {
-                mistakes++;
-            }
-        }
-        return (double) mistakes / docReader.numDocs();
-    }
+//    public double checkK(Directory docs) throws IOException {
+//        IndexReader docReader = DirectoryReader.open(docs);
+//        int mistakes = 0;
+//        for (int i = 0; i < docReader.numDocs(); i++) {
+//            Document doc = docReader.document(i);
+//            // String predicted = this.classifier.assignClass(doc).getAssignedClass().utf8ToString();
+//            String predicted =  "1";
+//            String actual = doc.get("class");
+//            if(!predicted.equals(actual)) {
+//                mistakes++;
+//            }
+//        }
+//        return (double) mistakes / docReader.numDocs();
+//    }
 
     public Map<Integer, List<Integer>> retrieve(Map<Integer, String> queries) throws ParseException, IOException {
 
@@ -80,13 +82,13 @@ public class Retriever {
         }
         return results;
     }
-    public KNearestNeighborDocumentClassifier getClassifier()
+    public KNearestNeighborClassifier getClassifier()
     {
         return this.classifier;
     }
-    public int classify(Document doc) throws Exception
-    {
-       return Integer.valueOf(this.classifier.assignClass(doc).getAssignedClass().utf8ToString());
-    }
+//    public int classify(Document doc) throws Exception
+//    {
+//       return 1; //Integer.valueOf(this.classifier.assignClass(doc).getAssignedClass().utf8ToString());
+//    }
 
 }

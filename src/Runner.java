@@ -7,55 +7,47 @@ import java.util.*;
 public class Runner {
 
 
- public static void main(String[] args) throws Exception {
-  File paramFile = new File(args[0]);
-  Map<String, String> params = Helpers.getParams(paramFile);
-  File outputFile = new File(params.get("outputFile"));
-  File trainFile = new File(params.get("trainFile"));
-  File testFile = new File(params.get("testFile"));
+    public static void main(String[] args) throws Exception {
+        File paramFile = new File(args[0]);
+        Map<String, String> params = Helpers.getParams(paramFile);
+        File outputFile = new File(params.get("outputFile"));
+        File trainFile = new File(params.get("trainFile"));
+        File testFile = new File(params.get("testFile"));
 
 
-  int kNeighbors = Integer.valueOf(params.get("k"));
+        int kNeighbors = Integer.valueOf(params.get("k"));
 
-  String[] csvHeaders = {"docId", "class", "title", "content"};
-//  TreeMap<Integer, Map<String,String>> trainMap = new TreeMap<Integer, Map<String,String>>(Helpers.csvParser(trainFile,csvHeaders));
+        String[] csvHeaders = {"docId", "class", "title", "content"};
+        System.out.println("Parsing...");
+        TreeMap<Integer, Map<String, String>> trainMap = new TreeMap<Integer, Map<String, String>>(Helpers.csvParser(trainFile, csvHeaders));
 
-//  HashMap<Integer, Map<String, String>> docsMap = new HashMap<Integer, Map<String, String>>(trainMap);
-  Map<Integer, Map<String,String>> validMap = new TreeMap<>();
-  Map<Integer, Map<String,String>> testMap = Helpers.csvParser(testFile,csvHeaders);
+        HashMap<Integer, Map<String, String>> docsMap = new HashMap<Integer, Map<String, String>>(trainMap);
+        Map<Integer, Map<String, String>> validMap = new TreeMap<>();
+        Map<Integer, Map<String, String>> testMap = Helpers.csvParser(testFile, csvHeaders);
+        System.out.println("Done Parsing");
 
-//  Random random = new Random();
-//  List<Integer> keys = new ArrayList<Integer>(docsMap.keySet());
-//  for(int i =0;i<docsMap.size()/100;i++) {
-//   Integer randomKey = keys.get(random.nextInt(keys.size()));
-//   keys.remove(randomKey);
-//   Map<String, String> value = docsMap.get(randomKey);
-//   validMap.put(randomKey, value);
-//   trainMap.remove(randomKey, value);
-//  }
+        Random random = new Random();
+        List<Integer> keys = new ArrayList<Integer>(docsMap.keySet());
+        System.out.println("Creating validation data set...");
+        for (int i = 0; i < docsMap.size() / 100; i++) {
+            Integer randomKey = keys.get(random.nextInt(keys.size()));
+            keys.remove(randomKey);
+            Map<String, String> value = docsMap.get(randomKey);
+            validMap.put(randomKey, value);
+            trainMap.remove(randomKey, value);
+        }
 
+        System.out.println("Done creating validation data set");
 
+        System.out.println("Indexing...");
+        IndexDocs index = new IndexDocs(trainMap);
+        IndexDocs validDocs = new IndexDocs(validMap);
+        System.out.println("Done Indexing");
 
-
-//  IndexDocs index = new IndexDocs(trainMap);
-  IndexDocs validDocs = new IndexDocs(testMap);
-
-  Map<Integer, List<Integer>> results;
-
-//  for (int i = 0; i <= 20; i++) {
-
-   // TODO: Confusion Matrix @Julian
-   Retriever masterRetriever = new Retriever(validDocs.getIndex(), validDocs.getAnalyzer(), BasicSimilarity.Tf.LOG_NORMALIZATION, BasicSimilarity.Idf.PROBABILISTIC_IDF, kNeighbors);
-//   System.out.println("Test for k = " + i);
+        Retriever masterRetriever = new Retriever(index.getIndex(), validDocs.getAnalyzer(), BasicSimilarity.Tf.LOG_NORMALIZATION, BasicSimilarity.Idf.PROBABILISTIC_IDF, kNeighbors);
 
 
-   Evaluator eva = new Evaluator(validDocs.getIndex(), masterRetriever.getClassifier());
-   System.out.println("Yikes");
-   double error = masterRetriever.checkK(validDocs.getIndex());
-   System.out.println("Valid Error = " + error);
-
-//  }
-
- }
+        Evaluator eva = new Evaluator(validDocs.getIndex(), masterRetriever.getClassifier());
+    }
 }
 
