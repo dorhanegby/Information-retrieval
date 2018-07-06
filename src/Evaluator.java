@@ -1,3 +1,9 @@
+import org.apache.lucene.classification.Classifier;
+import org.apache.lucene.classification.utils.ConfusionMatrixGenerator;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.store.Directory;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -7,10 +13,19 @@ public class Evaluator {
 
     Map<Integer, List<Integer>> truth;
     Map<Integer, List<Integer>> results;
+    IndexReader reader;
+    ConfusionMatrixGenerator.ConfusionMatrix matrix;
 
     public Evaluator(Map<Integer, List<Integer>> truth, Map<Integer, List<Integer>> results) {
         this.truth = truth;
         this.results = results;
+    }
+    public Evaluator(Directory docsToEvaluate, Classifier classifier) throws Exception
+    {
+        System.out.println("ss");
+        this.reader = DirectoryReader.open(docsToEvaluate);
+        this.matrix = ConfusionMatrixGenerator.getConfusionMatrix(reader,classifier,"class", "content" , 300 *1000);
+        System.out.println("sarlanga");
     }
 
     public double[] calcRPF() {
